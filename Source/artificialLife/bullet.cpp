@@ -19,6 +19,9 @@ Abullet::Abullet()
 	bulletMovement->MaxSpeed = 5000.f;
 	bulletMovement->ProjectileGravityScale = 0.0f;
 	bulletMovement->bRotationFollowsVelocity = true;
+
+	SetReplicates(true);
+	SetReplicateMovement(true);
 }
 
 // Called when the game starts or when spawned

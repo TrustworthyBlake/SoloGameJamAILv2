@@ -9,6 +9,8 @@
 #include "GameFramework/Controller.h"
 #include "GameFramework/SpringArmComponent.h"
 #include "bullet.h"
+#include "Net/UnrealNetwork.h"
+#include "Engine/Engine.h"
 
 //////////////////////////////////////////////////////////////////////////
 // AartificialLifeCharacter
@@ -77,51 +79,6 @@ void AartificialLifeCharacter::SetupPlayerInputComponent(class UInputComponent* 
 
 	// VR headset functionality
 	PlayerInputComponent->BindAction("ResetVR", IE_Pressed, this, &AartificialLifeCharacter::OnResetVR);
-}
-
-
-void AartificialLifeCharacter::shoot()
-{
-	UE_LOG(LogTemp, Warning, TEXT("shoot pressed"));
-
-	// Get the camera transform.
-	FVector CameraLocation;
-	FRotator CameraRotation;
-	GetActorEyesViewPoint(CameraLocation, CameraRotation);
-
-	// Set MuzzleOffset to spawn projectiles slightly in front of the camera.
-	MuzzleOffset.Set(100.0f, 60.0f, -40.0f);
-
-	// Transform MuzzleOffset from camera space to world space.
-	FVector MuzzleLocation = CameraLocation + FTransform(CameraRotation).TransformVector(MuzzleOffset);
-
-	// Skew the aim to be slightly upwards.
-	FRotator MuzzleRotation = CameraRotation;
-	MuzzleRotation.Pitch += 2.0f;
-
-	UWorld* World = GetWorld();
-
-	FActorSpawnParameters SpawnParams;
-	SpawnParams.Owner = this;
-	SpawnParams.Instigator = GetInstigator();
-
-	Abullet* bullet = World->SpawnActor<Abullet>(BPbullet, MuzzleLocation, MuzzleRotation, SpawnParams);
-
-	if (bullet) {
-		FVector LaunchDirection = MuzzleRotation.Vector();
-		bullet->FireInDirection(LaunchDirection);
-	}
-
-	/*FTransform SpawnTransform = GetActorTransform();
-	//const FRotator SpawnRotation = FollowCamera->GetComponentRotation().Vector();
-	//SpawnTransform.TransformPosition(FVector(0.0f, 0.0f, 100.0f));
-	//SpawnTransform.SetLocation(FollowCamera->GetComponentRotation().Vector() * 200.0f + GetActorLocation());
-	SpawnTransform.SetLocation(((FollowCamera->GetComponentRotation().Vector() * 20.0f) + (GetActorRightVector() * 60.0f) + (GetActorUpVector() * 40.0f)  + GetActorLocation() + FollowCamera->GetComponentRotation().Vector()));
-	//FollowCamera->GetComponent
-	FActorSpawnParameters SpawnParams;
-
-	//GetWorld()->SpawnActor<Abullet>(BPbullet, SpawnTransform, SpawnRotation, SpawnParams);
-	GetWorld()->SpawnActor<Abullet>(BPbullet, SpawnTransform, SpawnParams);*/
 }
 
 void AartificialLifeCharacter::OnResetVR()
@@ -205,3 +162,58 @@ void AartificialLifeCharacter::playerTakeDamage(float damage) {
 	updatePlayerHP(-damage);
 }
 
+void AartificialLifeCharacter::serverOnShoot_Implementation() {
+	shoot();
+}
+
+
+void AartificialLifeCharacter::shoot() {
+	//UE_LOG(LogTemp, Warning, TEXT("shoot pressed"));
+
+	if (!HasAuthority()) {
+		serverOnShoot();
+	}
+	else {
+		// Get the camera transform.
+		FVector CameraLocation;
+		FRotator CameraRotation;
+		GetActorEyesViewPoint(CameraLocation, CameraRotation);
+
+		// Set MuzzleOffset to spawn projectiles slightly in front of the camera.
+		MuzzleOffset.Set(100.0f, 60.0f, -40.0f);
+
+		// Transform MuzzleOffset from camera space to world space.
+		FVector MuzzleLocation = CameraLocation + FTransform(CameraRotation).TransformVector(MuzzleOffset);
+
+		// Skew the aim to be slightly upwards.
+		FRotator MuzzleRotation = CameraRotation;
+		MuzzleRotation.Pitch += 2.0f;
+
+		UWorld* World = GetWorld();
+
+		FActorSpawnParameters SpawnParams;
+		SpawnParams.Owner = this;
+		SpawnParams.Instigator = GetInstigator();
+
+		Abullet* bullet = World->SpawnActor<Abullet>(BPbullet, MuzzleLocation, MuzzleRotation, SpawnParams);
+
+		if (bullet) {
+			FVector LaunchDirection = MuzzleRotation.Vector();
+			bullet->FireInDirection(LaunchDirection);
+		}
+	}
+	/*FTransform SpawnTransform = GetActorTransform();
+	//const FRotator SpawnRotation = FollowCamera->GetComponentRotation().Vector();
+	//SpawnTransform.TransformPosition(FVector(0.0f, 0.0f, 100.0f));
+	//SpawnTransform.SetLocation(FollowCamera->GetComponentRotation().Vector() * 200.0f + GetActorLocation());
+	SpawnTransform.SetLocation(((FollowCamera->GetComponentRotation().Vector() * 20.0f) + (GetActorRightVector() * 60.0f) + (GetActorUpVector() * 40.0f)  + GetActorLocation() + FollowCamera->GetComponentRotation().Vector()));
+	//FollowCamera->GetComponent
+	FActorSpawnParameters SpawnParams;
+
+	//GetWorld()->SpawnActor<Abullet>(BPbullet, SpawnTransform, SpawnRotation, SpawnParams);
+	GetWorld()->SpawnActor<Abullet>(BPbullet, SpawnTransform, SpawnParams);*/
+}
+
+/*bool AartificialLifeCharacter::serverOnShootValidate() {
+	return true;
+}*/

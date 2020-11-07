@@ -65,6 +65,11 @@ public:
 
 protected:
 
+	UFUNCTION(Server, Reliable)//, WithValidation)
+	void serverOnShoot();
+
+	//bool serverOnShootValidate();
+
 	void shoot();
 
 	/** Resets HMD orientation in VR. */
