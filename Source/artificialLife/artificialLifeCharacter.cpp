@@ -11,6 +11,9 @@
 #include "bullet.h"
 #include "Net/UnrealNetwork.h"
 #include "Engine/Engine.h"
+#include "tdmGameMode.h"
+#include "Components/StaticMeshComponent.h"
+#include "GameFramework/ProjectileMovementComponent.h"
 
 //////////////////////////////////////////////////////////////////////////
 // AartificialLifeCharacter
@@ -156,10 +159,17 @@ void AartificialLifeCharacter::updatePlayerHP(float HP) {
 	tempPlayerHP = playerHPpercent;
 	playerHPpercent = currentPlayerHP / maxPlayerHP;
 	UE_LOG(LogTemp, Warning, TEXT("hp should update"));
+	/*if (currentPlayerHP <= 0.0f) {
+		onRep_kill();
+	}*/
 }
 
 void AartificialLifeCharacter::playerTakeDamage(float damage) {
 	updatePlayerHP(-damage);
+}
+
+void AartificialLifeCharacter::onRep_currentPlayerHP() {
+	updatePlayerHP(0);
 }
 
 void AartificialLifeCharacter::serverOnShoot_Implementation() {
@@ -202,16 +212,6 @@ void AartificialLifeCharacter::shoot() {
 			bullet->FireInDirection(LaunchDirection);
 		}
 	}
-	/*FTransform SpawnTransform = GetActorTransform();
-	//const FRotator SpawnRotation = FollowCamera->GetComponentRotation().Vector();
-	//SpawnTransform.TransformPosition(FVector(0.0f, 0.0f, 100.0f));
-	//SpawnTransform.SetLocation(FollowCamera->GetComponentRotation().Vector() * 200.0f + GetActorLocation());
-	SpawnTransform.SetLocation(((FollowCamera->GetComponentRotation().Vector() * 20.0f) + (GetActorRightVector() * 60.0f) + (GetActorUpVector() * 40.0f)  + GetActorLocation() + FollowCamera->GetComponentRotation().Vector()));
-	//FollowCamera->GetComponent
-	FActorSpawnParameters SpawnParams;
-
-	//GetWorld()->SpawnActor<Abullet>(BPbullet, SpawnTransform, SpawnRotation, SpawnParams);
-	GetWorld()->SpawnActor<Abullet>(BPbullet, SpawnTransform, SpawnParams);*/
 }
 
 /*bool AartificialLifeCharacter::serverOnShootValidate() {
@@ -221,14 +221,27 @@ void AartificialLifeCharacter::shoot() {
 void AartificialLifeCharacter::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const {
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
 	DOREPLIFETIME(AartificialLifeCharacter, killer);
+	DOREPLIFETIME(AartificialLifeCharacter, currentPlayerHP);
 }
 
 void AartificialLifeCharacter::onRep_kill() {
+
+/*
+		if (AartificialLifeCharacter* playerHit = Cast<AartificialLifeCharacter>(otherActor)) {
+				if (AtdmGameMode* mode = Cast<AtdmGameMode>(GetWorld()->GetAuthGameMode())) {
+					AartificialLifeCharacter* killer = Cast<AartificialLifeCharacter>(GetOwner());
+					mode->playerKilled(playerHit, killer);
+					playerHit->killer = killer;
+					playerHit->Destroy();
+				}
+			}*/
 	if (IsLocallyControlled()) {
 		displayDeathScreen();
 	}
-	GetCapsuleComponent()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
-	GetMesh()->SetSimulatePhysics(true);
-	GetMesh()->SetCollisionResponseToAllChannels(ECR_Block);
-	SetLifeSpan(15.0f);
+
+	//GetCapsuleComponent()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+	//GetMesh()->SetSimulatePhysics(true);
+	//GetMesh()->SetCollisionResponseToAllChannels(ECR_Block);
+	//SetLifeSpan(5.0f);
+	//Destroy();
 }

@@ -4,6 +4,8 @@
 #include "bullet.h"
 #include "Components/StaticMeshComponent.h"
 #include "GameFramework/ProjectileMovementComponent.h"
+#include "artificialLifeCharacter.h"
+#include "tdmGameMode.h"
 
 // Sets default values
 Abullet::Abullet()
@@ -40,4 +42,20 @@ void Abullet::Tick(float DeltaTime)
 
 void Abullet::FireInDirection(const FVector& ShootDirection) {
 	bulletMovement->Velocity = ShootDirection * bulletMovement->InitialSpeed;
+}
+
+void Abullet::onHit(UPrimitiveComponent* hitComp, AActor* otherActor, UPrimitiveComponent* otherComp, FVector normalImpulse, const FHitResult& hit) {
+	if (HasAuthority()) {
+		if (AartificialLifeCharacter* playerHit = Cast<AartificialLifeCharacter>(otherActor)) {
+			//if (playerHit->currentPlayerHP <= 0.0f) {
+			playerHit->playerTakeDamage(25.0f);
+				if (AtdmGameMode* mode = Cast<AtdmGameMode>(GetWorld()->GetAuthGameMode())) {
+					AartificialLifeCharacter* killer = Cast<AartificialLifeCharacter>(GetOwner());
+					mode->playerKilled(playerHit, killer);
+					playerHit->killer = killer;
+					playerHit->onRep_kill();
+				}
+			//}
+		}
+	}
 }

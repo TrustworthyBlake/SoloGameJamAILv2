@@ -38,7 +38,7 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "health")
 	float maxPlayerHP;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "health")
+	UPROPERTY(ReplicatedUsing = onRep_currentPlayerHP, EditAnywhere, BlueprintReadWrite, Category = "health") //-------->
 	float currentPlayerHP;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "health")
@@ -71,6 +71,12 @@ public:
 
 	UFUNCTION(BlueprintImplementableEvent)
 	void displayDeathScreen();
+
+	UFUNCTION()
+	void onRep_currentPlayerHP();
+
+	//UPROPERTY(ReplicatedUsing = onRep_currentPlayerHP)
+	//;
 
 protected:
 

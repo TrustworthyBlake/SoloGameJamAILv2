@@ -35,4 +35,6 @@ public:
 
 	void FireInDirection(const FVector& ShootDirection);
 
+	UFUNCTION(BlueprintCallable)
+	void onHit(UPrimitiveComponent* hitComp, AActor* otherActor, UPrimitiveComponent* otherComp, FVector normalImpulse, const FHitResult& hit);
 };
