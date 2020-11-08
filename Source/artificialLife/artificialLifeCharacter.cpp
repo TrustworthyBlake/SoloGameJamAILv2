@@ -217,3 +217,18 @@ void AartificialLifeCharacter::shoot() {
 /*bool AartificialLifeCharacter::serverOnShootValidate() {
 	return true;
 }*/
+
+void AartificialLifeCharacter::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const {
+	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+	DOREPLIFETIME(AartificialLifeCharacter, killer);
+}
+
+void AartificialLifeCharacter::onRep_kill() {
+	if (IsLocallyControlled()) {
+		displayDeathScreen();
+	}
+	GetCapsuleComponent()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+	GetMesh()->SetSimulatePhysics(true);
+	GetMesh()->SetCollisionResponseToAllChannels(ECR_Block);
+	SetLifeSpan(15.0f);
+}

@@ -63,7 +63,18 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Gameplay)
 	FVector MuzzleOffset;
 
+	UPROPERTY(ReplicatedUsing = onRep_Kill, BlueprintReadOnly, Category = Gameplay)
+	AartificialLifeCharacter* killer;
+
+	UFUNCTION()
+	void onRep_kill();
+
+	UFUNCTION(BlueprintImplementableEvent)
+	void displayDeathScreen();
+
 protected:
+
+	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
 
 	UFUNCTION(Server, Reliable)//, WithValidation)
 	void serverOnShoot();
