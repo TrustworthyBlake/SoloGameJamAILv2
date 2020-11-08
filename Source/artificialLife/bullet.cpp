@@ -46,16 +46,17 @@ void Abullet::FireInDirection(const FVector& ShootDirection) {
 
 void Abullet::onHit(UPrimitiveComponent* hitComp, AActor* otherActor, UPrimitiveComponent* otherComp, FVector normalImpulse, const FHitResult& hit) {
 	if (HasAuthority()) {
-		if (AartificialLifeCharacter* playerHit = Cast<AartificialLifeCharacter>(otherActor)) {
-			//if (playerHit->currentPlayerHP <= 0.0f) {
+		if (AartificialLifeCharacter* playerHit = Cast<AartificialLifeCharacter>(otherActor)) {			
 			playerHit->playerTakeDamage(25.0f);
+			if (playerHit->currentPlayerHP <= 0.0f) {
 				if (AtdmGameMode* mode = Cast<AtdmGameMode>(GetWorld()->GetAuthGameMode())) {
+					UE_LOG(LogTemp, Warning, TEXT("you are dead"));
 					AartificialLifeCharacter* killer = Cast<AartificialLifeCharacter>(GetOwner());
 					mode->playerKilled(playerHit, killer);
 					playerHit->killer = killer;
 					playerHit->onRep_kill();
 				}
-			//}
+			}
 		}
 	}
 }

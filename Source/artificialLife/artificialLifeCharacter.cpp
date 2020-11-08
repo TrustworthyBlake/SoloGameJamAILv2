@@ -225,23 +225,14 @@ void AartificialLifeCharacter::GetLifetimeReplicatedProps(TArray<FLifetimeProper
 }
 
 void AartificialLifeCharacter::onRep_kill() {
-
-/*
-		if (AartificialLifeCharacter* playerHit = Cast<AartificialLifeCharacter>(otherActor)) {
-				if (AtdmGameMode* mode = Cast<AtdmGameMode>(GetWorld()->GetAuthGameMode())) {
-					AartificialLifeCharacter* killer = Cast<AartificialLifeCharacter>(GetOwner());
-					mode->playerKilled(playerHit, killer);
-					playerHit->killer = killer;
-					playerHit->Destroy();
-				}
-			}*/
 	if (IsLocallyControlled()) {
 		displayDeathScreen();
 	}
 
-	//GetCapsuleComponent()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
-	//GetMesh()->SetSimulatePhysics(true);
-	//GetMesh()->SetCollisionResponseToAllChannels(ECR_Block);
-	//SetLifeSpan(5.0f);
+	GetCapsuleComponent()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+	GetMesh()->SetSimulatePhysics(true);
+	GetMesh()->SetCollisionEnabled(ECollisionEnabled::PhysicsOnly);
+	GetMesh()->SetCollisionResponseToAllChannels(ECR_Block);
+	SetLifeSpan(05.0f);
 	//Destroy();
 }
