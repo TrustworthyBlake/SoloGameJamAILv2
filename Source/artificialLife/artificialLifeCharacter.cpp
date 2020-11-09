@@ -14,6 +14,7 @@
 #include "tdmGameMode.h"
 #include "Components/StaticMeshComponent.h"
 #include "GameFramework/ProjectileMovementComponent.h"
+#include "Animation/AnimInstance.h"
 
 //////////////////////////////////////////////////////////////////////////
 // AartificialLifeCharacter
@@ -181,6 +182,14 @@ void AartificialLifeCharacter::shoot() {
 	//UE_LOG(LogTemp, Warning, TEXT("shoot pressed"));
 
 	if (!HasAuthority()) {
+		if (AnimMontage != NULL) {
+			UAnimInstance* AnimInstance = TwinBlast_Electro->GetAnimInstance();//AnimMontage'/Game/ParagonTwinblast/Characters/Heroes/TwinBlast/Animations/DoubleShot_Fire_Lft_Montage.DoubleShot_Fire_Lft_Montage'
+			//animInstance->Montage_Play(AttackMontage->Montage, 1.0f, EMontagePlayReturnType::Duration, 0.0f, true);
+			if (AnimInstance != nullptr)
+			{
+				AnimInstance->Montage_Play(AnimMontage, 1.f);
+			}
+		}
 		serverOnShoot();
 	}
 	else {

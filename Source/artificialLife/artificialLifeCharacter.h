@@ -18,6 +18,9 @@ class AartificialLifeCharacter : public ACharacter
 	/** Follow camera */
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
 	class UCameraComponent* FollowCamera;
+
+	UPROPERTY(VisibleDefaultsOnly, Category = Mesh)
+	class USkeletalMeshComponent* TwinBlast_Electro;
 public:
 	AartificialLifeCharacter();
 
@@ -77,6 +80,12 @@ public:
 
 	//UPROPERTY(ReplicatedUsing = onRep_currentPlayerHP)
 	//;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Gameplay)
+		class UAnimMontage* AnimMontage;
+
+
+
+	FORCEINLINE class USkeletalMeshComponent* GetMesh() const { return TwinBlast_Electro; }
 
 protected:
 

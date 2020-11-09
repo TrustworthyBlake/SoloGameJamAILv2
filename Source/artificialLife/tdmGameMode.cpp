@@ -9,6 +9,7 @@
 
 AtdmGameMode::AtdmGameMode()
 	: Super() {
+	PlayerControllerClass = AtdmPlayerController::StaticClass();
 }
 
 void AtdmGameMode::PostLogin(APlayerController* newPlayer)
